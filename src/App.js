@@ -1,7 +1,5 @@
 import './App.css';
 import React from 'react';
-//import Item from './Item'
-
 
 class StarWars extends React.Component {
   constructor() {
@@ -10,14 +8,16 @@ class StarWars extends React.Component {
       name: null,
       height: null,
       homeworld: null,
+      homeworldName: null,
       films: [],
       loadedCharacter: false
     };
   }
 
   getNewCharacter() {
-    const randomNum = Math.round(Math.random()*82)
-    const url = `https://swapi.dev/api/people/${randomNum}/`
+    const randomNum = Math.round(Math.random() * 82);
+    const url = `https://swapi.dev/api/people/${randomNum}/`;
+    
     fetch(url)
       .then(response => response.json())
       .then(data => {
@@ -28,6 +28,13 @@ class StarWars extends React.Component {
           films: data.films,
           loadedCharacter: true
         });
+        return fetch(data.homeworld);
+      })
+      .then(response => response.json())
+      .then(data => {
+        this.setState({
+          homeworldName: data.name
+        });
       });
   }
 
@@ -37,8 +44,9 @@ class StarWars extends React.Component {
         {this.state.loadedCharacter &&
           <div>
             <h1>{this.state.name}</h1>
-            <p>{this.state.height} cm</p>
-            <p><a href={this.state.homeworld}>Homeworld</a></p>
+            <p>Height: {this.state.height} cm</p>
+            <p>Homeworld: {this.state.homeworldName} (<a href={this.state.homeworld} target="_blank" rel="noopener noreferrer">Link</a>)</p>
+            <h3>Films:</h3>
             <ul>
               {this.state.films.map((film, index) => (
                 <li key={index}>{film}</li>
@@ -58,7 +66,6 @@ class StarWars extends React.Component {
     );
   }
 }
-
 
 function App() {
   return (
